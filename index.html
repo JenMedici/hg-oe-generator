@@ -72,11 +72,11 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
       <div class="row2">
         <div class="fld">
           <label>Plan Year Start</label>
-          <input type="text" id="pyStart" placeholder="January 1, 2026">
+          <input type="text" id="pyStart" placeholder="January 1, 2027">
         </div>
         <div class="fld">
           <label>Plan Year End</label>
-          <input type="text" id="pyEnd" placeholder="December 31, 2026">
+          <input type="text" id="pyEnd" placeholder="December 31, 2027">
         </div>
       </div>
     </div>
@@ -87,6 +87,10 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
         <div class="plan-box" id="box-hcfsa" onclick="togglePlan('hcfsa')">
           <input type="checkbox" id="chk-hcfsa">
           <div><div class="plan-label">Healthcare FSA</div><div class="plan-desc">Medical, Rx, dental, vision expenses</div></div>
+        </div>
+        <div class="plan-box" id="box-lpfsa" onclick="togglePlan('lpfsa')">
+          <input type="checkbox" id="chk-lpfsa">
+          <div><div class="plan-label">Limited Purpose FSA</div><div class="plan-desc">Dental and vision expenses (HSA compatible)</div></div>
         </div>
         <div class="plan-box" id="box-dcfsa" onclick="togglePlan('dcfsa')">
           <input type="checkbox" id="chk-dcfsa">
@@ -108,7 +112,8 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
         <div class="row2">
           <div class="fld">
             <label>Annual Maximum Contribution</label>
-            <input type="text" id="hcfsa-max" value="$3,400">
+            <input type="text" id="hcfsa-max" value="$3,500">
+            <p class="note">2027 IRS limit</p>
           </div>
           <div class="fld">
             <label>Year-End Rule</label>
@@ -122,11 +127,43 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
         <div class="row2" id="hcfsa-carryover-row">
           <div class="fld">
             <label>Carryover Maximum</label>
-            <input type="text" id="hcfsa-carryover" value="$680">
+            <input type="text" id="hcfsa-carryover" value="$700">
+            <p class="note">2027 IRS max carryover</p>
           </div>
           <div class="fld">
             <label>Run-Out Period</label>
             <input type="text" id="hcfsa-runout" value="90 days" placeholder="e.g. 90 days">
+          </div>
+        </div>
+      </div>
+
+      <!-- LP FSA fields -->
+      <div class="plan-detail" id="detail-lpfsa">
+        <h3>Limited Purpose FSA Details</h3>
+        <div class="row2">
+          <div class="fld">
+            <label>Annual Maximum Contribution</label>
+            <input type="text" id="lpfsa-max" value="$3,500">
+            <p class="note">2027 IRS limit (same as Healthcare FSA)</p>
+          </div>
+          <div class="fld">
+            <label>Year-End Rule</label>
+            <select id="lpfsa-type" onchange="updateLPCarryoverRow()">
+              <option value="carryover">Carryover</option>
+              <option value="grace">Grace Period (2.5 months)</option>
+              <option value="neither">Use It or Lose It</option>
+            </select>
+          </div>
+        </div>
+        <div class="row2" id="lpfsa-carryover-row">
+          <div class="fld">
+            <label>Carryover Maximum</label>
+            <input type="text" id="lpfsa-carryover" value="$700">
+            <p class="note">2027 IRS max carryover</p>
+          </div>
+          <div class="fld">
+            <label>Run-Out Period</label>
+            <input type="text" id="lpfsa-runout" value="90 days" placeholder="e.g. 90 days">
           </div>
         </div>
       </div>
@@ -138,6 +175,7 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
           <div class="fld">
             <label>Max (joint / single)</label>
             <input type="text" id="dcfsa-max-joint" value="$7,500">
+            <p class="note">2027 IRS limit</p>
           </div>
           <div class="fld">
             <label>Max (married filing sep.)</label>
@@ -166,8 +204,8 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
           </div>
           <div class="fld">
             <label>Transit Monthly Maximum</label>
-            <input type="text" id="commuter-transit" value="$340">
-            <p class="note">2026 IRS limit is $340/month</p>
+            <input type="text" id="commuter-transit" value="$350">
+            <p class="note">2027 IRS limit is $350/month</p>
           </div>
         </div>
         <div class="row2">
@@ -180,8 +218,8 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
           </div>
           <div class="fld">
             <label>Parking Monthly Maximum</label>
-            <input type="text" id="commuter-parking" value="$340">
-            <p class="note">2026 IRS limit is $340/month</p>
+            <input type="text" id="commuter-parking" value="$350">
+            <p class="note">2027 IRS limit is $350/month</p>
           </div>
         </div>
       </div>
@@ -192,13 +230,13 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
         <div class="row3">
           <div class="fld">
             <label>Individual Annual Max</label>
-            <input type="text" id="hsa-ind" value="$4,400">
-            <p class="note">2026 IRS limit</p>
+            <input type="text" id="hsa-ind" value="$4,500">
+            <p class="note">2027 IRS limit</p>
           </div>
           <div class="fld">
             <label>Family Annual Max</label>
-            <input type="text" id="hsa-fam" value="$8,750">
-            <p class="note">2026 IRS limit</p>
+            <input type="text" id="hsa-fam" value="$9,000">
+            <p class="note">2027 IRS limit</p>
           </div>
           <div class="fld">
             <label>Catch-Up (age 55+)</label>
@@ -212,7 +250,7 @@ input:focus, select:focus { border-color: #14229D; box-shadow: 0 0 0 3px rgba(20
           </div>
           <div class="fld">
             <label>HDHP Deductible (optional)</label>
-            <input type="text" id="hsa-deductible" placeholder="e.g. $1,650 individual">
+            <input type="text" id="hsa-deductible" placeholder="e.g. $1,750 individual">
           </div>
         </div>
         <div class="row2" style="margin-top:8px">
@@ -458,13 +496,13 @@ function addHCFSA(pptx, cfg, pg) {
   // Page 8: Plan Year Details — updated title, bigger font
   {const s=pptx.addSlide('HG'); hdr(s,'Your Healthcare FSA Plan Details');
   const rows=[
-    ['Annual Maximum Contribution', cfg.max||'$3,400'],
+    ['Annual Maximum Contribution', cfg.max||'$3,500'],
     ['Funds Available', 'Election amount is available immediately at the start of the plan year'],
     ['Contributions via', 'Pre-tax payroll deduction throughout the plan year'],
     ['Annual Election', 'Set for the plan year; changes only with a qualifying life event (marriage, divorce, new child, etc.)'],
   ];
   if(cfg.type==='carryover') {
-    rows.push(['Carryover', 'Up to '+(cfg.carryover||'$680')+' of your remaining balance carries over to the next plan year']);
+    rows.push(['Carryover', 'Up to '+(cfg.carryover||'$700')+' of your remaining balance carries over to the next plan year']);
     if(cfg.runout) rows.push(['Run-Out Period', cfg.runout+' after the plan year ends to submit claims for expenses incurred']);
   } else if(cfg.type==='grace') {
     rows.push(['Grace Period','2.5 months after the plan year ends to incur eligible expenses']);
@@ -492,6 +530,117 @@ function addHCFSA(pptx, cfg, pg) {
     s.addShape(ST.rect,{x,y:1.0,w:3.95,h:.62,fill:{color:NAVY},line:{color:NAVY,w:0},rectRadius:.08});
     s.addText(title,{x:x+.15,y:1.0,w:3.65,h:.62,fontSize:16,bold:true,color:WHITE,fontFace:'Century Gothic',valign:'middle'});
     s.addText(desc,{x:x+.2,y:1.72,w:3.55,h:4.7,fontSize:16,color:DARK,fontFace:'Century Gothic',wrap:true,lineSpacingMultiple:1.3});
+  });
+  ftr(s,pg); pg++;}
+
+  return pg;
+}
+
+// ========== LIMITED PURPOSE FSA ==========
+function addLPFSA(pptx, cfg, plans, pg) {
+  // Section divider
+  {const s=pptx.addSlide('HG');
+  s.addShape(ST.rect,{x:0,y:0,w:'100%',h:'100%',fill:{color:NAVY}});
+  s.addShape(ST.rect,{x:5.0,y:0,w:8.33,h:'100%',fill:{color:WHITE}});
+  s.addShape(ST.rect,{x:5.0,y:0,w:.07,h:'100%',fill:{color:GREEN}});
+  if (I.logoW) s.addImage({data:I.logoW,x:.4,y:.38,w:1.05,h:.38,sizing:{type:'contain',w:1.05,h:.38}});
+  s.addText('Limited\nPurpose\nFlexible\nSpending\nAccount',{x:.35,y:1.7,w:4.3,h:3.8,fontSize:34,bold:true,color:WHITE,fontFace:'Century Gothic',wrap:true,lineSpacingMultiple:1.15});
+  iob(s,'prof',5.15,.15,8.0,6.85,'Professional Photo');
+  s.addShape(ST.rect,{x:0,y:7.15,w:'100%',h:.05,fill:{color:GREEN}});
+  if (I.logoW) s.addImage({data:I.logoW,x:.3,y:7.22,w:.60,h:.22,sizing:{type:'contain',w:.60,h:.22}});
+  pg++;}
+
+  // What is an LPFSA / how it works with an HSA
+  {const s=pptx.addSlide('HG');
+  hdr(s,'What Is a Limited Purpose FSA?');
+  s.addText('A Limited Purpose FSA lets you set aside pre-tax dollars for eligible dental and vision expenses, and it works side by side with a Health Savings Account (HSA).',
+    {x:.45,y:.88,w:12.4,h:.95,fontSize:20,color:DARK,fontFace:'Century Gothic',wrap:true,lineSpacingMultiple:1.15});
+  // Two-account visual
+  const acct=[
+    ['Limited Purpose FSA','Use it NOW','Covers dental and vision expenses this plan year.  Your full election is available on day one.',BLUE],
+    ['Health Savings Account','Save it for LATER','Keep your HSA dollars growing tax-free for medical costs today, tomorrow, or in retirement.',GREEN],
+  ];
+  acct.forEach(([t,tag,d,c],i)=>{
+    const x=i===0?.45:7.0;
+    s.addShape(ST.rect,{x,y:2.0,w:5.9,h:3.2,fill:{color:'F8FAFF'},line:{color:c,w:2},rectRadius:.14});
+    s.addShape(ST.rect,{x,y:2.0,w:5.9,h:.72,fill:{color:c},line:{color:c,w:0},rectRadius:.12});
+    s.addText(t,{x:x+.15,y:2.0,w:5.6,h:.72,fontSize:18,bold:true,color:WHITE,fontFace:'Century Gothic',align:'center',valign:'middle'});
+    s.addText(tag,{x:x+.15,y:2.85,w:5.6,h:.6,fontSize:22,bold:true,color:c==GREEN?'1E8A2A':NAVY,fontFace:'Century Gothic',align:'center',valign:'middle'});
+    s.addText(d,{x:x+.35,y:3.5,w:5.2,h:1.55,fontSize:16,color:DARK,fontFace:'Century Gothic',align:'center',valign:'top',wrap:true,lineSpacingMultiple:1.2});
+  });
+  s.addShape(ST.ellipse,{x:6.27,y:3.2,w:.8,h:.8,fill:{color:NAVY},line:{color:WHITE,w:3}});
+  s.addText('+',{x:6.27,y:3.2,w:.8,h:.8,fontSize:28,bold:true,color:WHITE,fontFace:'Century Gothic',align:'center',valign:'middle'});
+  s.addShape(ST.rect,{x:.45,y:5.45,w:12.4,h:1.5,fill:{color:LIGHT},line:{color:'C5D0EA',w:1},rectRadius:.1});
+  s.addText([
+    {text:'Why not a regular Healthcare FSA?  ',options:{bold:true,color:NAVY}},
+    {text:'IRS rules do not allow you to contribute to an HSA while you are covered by a general-purpose Healthcare FSA.  A Limited Purpose FSA keeps you HSA eligible.'},
+  ],{x:.7,y:5.45,w:11.9,h:1.5,fontSize:16,color:DARK,fontFace:'Century Gothic',valign:'middle',wrap:true,lineSpacingMultiple:1.2});
+  ftr(s,pg); pg++;}
+
+  // Is it right for you? (blue bg cards)
+  {const s=pptx.addSlide('HG');
+  s.addShape(ST.rect,{x:0,y:0,w:'100%',h:'100%',fill:{color:'1A3060'}});
+  s.addShape(ST.rect,{x:0,y:0,w:'100%',h:.78,fill:{color:GREEN}});
+  s.addText('IS A LIMITED PURPOSE FSA RIGHT FOR YOU?',{x:.35,y:0,w:12.6,h:.78,fontSize:20,bold:true,color:WHITE,fontFace:'Century Gothic',valign:'middle'});
+  const items=[
+    'You are enrolled in an HSA-qualified high deductible health plan and want extra tax savings',
+    'You or your family have regular dental cleanings, fillings, crowns, or orthodontia (braces)',
+    'You or your children wear glasses or contact lenses, or are planning LASIK surgery',
+    'You want to save your HSA dollars for the future and pay dental and vision costs from your FSA instead',
+  ];
+  items.forEach((txt,i)=>{
+    const row=Math.floor(i/2), col=i%2;
+    const x=col===0?.45:7.0, y=.95+row*3.1;
+    s.addShape(ST.rect,{x,y,w:5.9,h:2.9,fill:{color:'1A3C7A'},line:{color:GREEN,w:1.5},rectRadius:.12});
+    s.addShape(ST.ellipse,{x:x+.2,y:y+.18,w:.65,h:.65,fill:{color:GREEN},line:{color:GREEN,w:0}});
+    s.addText('✔',{x:x+.2,y:y+.18,w:.65,h:.65,fontSize:14,bold:true,color:WHITE,fontFace:'Century Gothic',align:'center',valign:'middle'});
+    s.addText(txt,{x:x+1.05,y:y+.12,w:4.65,h:2.62,fontSize:18,color:WHITE,fontFace:'Century Gothic',wrap:true,lineSpacingMultiple:1.25,valign:'middle'});
+  });
+  ftr(s,pg,true); pg++;}
+
+  // Eligible expenses
+  {const s=pptx.addSlide('HG'); hdr(s,'Limited Purpose FSA: Eligible Expenses');
+  const cats=[
+    ['Preventive Dental','Cleanings, exams, x-rays, and sealants'],
+    ['Restorative Dental','Fillings, crowns, bridges, root canals, and dentures'],
+    ['Orthodontia','Braces, retainers, and clear aligners'],
+    ['Eye Exams','Routine vision exams and eye care visits'],
+    ['Eyewear','Prescription glasses, sunglasses, contact lenses, and solution'],
+    ['Vision Correction','LASIK and other corrective eye surgery'],
+  ];
+  cats.forEach(([title,desc],i)=>{
+    const col=i<3?0:1, row=i<3?i:i-3;
+    const x=col===0?.45:7.0, y=.95+row*1.95;
+    s.addShape(ST.rect,{x,y,w:5.9,h:1.78,fill:{color:LIGHT},line:{color:'C5D0EA',w:1},rectRadius:.1});
+    s.addShape(ST.rect,{x,y,w:.2,h:1.78,fill:{color:col===0?NAVY:GREEN},line:{color:col===0?NAVY:GREEN,w:0}});
+    s.addText(title,{x:x+.35,y:y+.1,w:5.3,h:.5,fontSize:15,bold:true,color:NAVY,fontFace:'Century Gothic'});
+    s.addText(desc,{x:x+.35,y:y+.62,w:5.3,h:1.05,fontSize:14,color:DARK,fontFace:'Century Gothic',wrap:true});
+  });
+  s.addText('Medical and prescription expenses are not eligible.  Use your HSA for those.',
+    {x:.45,y:6.82,w:12.4,h:.3,fontSize:12,color:BLUE,fontFace:'Century Gothic',italic:true});
+  ftr(s,pg); pg++;}
+
+  // Plan details
+  {const s=pptx.addSlide('HG'); hdr(s,'Your Limited Purpose FSA Plan Details');
+  const rows=[
+    ['Annual Maximum Contribution', cfg.max||'$3,500'],
+    ['Funds Available', 'Your full election is available at the start of the plan year'],
+    ['Contributions via', 'Pre-tax payroll deduction throughout the plan year'],
+    ['Annual Election', 'Set for the plan year; changes only with a qualifying life event (marriage, divorce, new child, etc.)'],
+  ];
+  if(cfg.type==='carryover') {
+    rows.push(['Carryover', 'Up to '+(cfg.carryover||'$700')+' of your remaining balance carries over to the next plan year']);
+    if(cfg.runout) rows.push(['Run-Out Period', cfg.runout+' after the plan year ends to submit claims for expenses incurred']);
+  } else if(cfg.type==='grace') {
+    rows.push(['Grace Period','2.5 months after the plan year ends to incur eligible expenses']);
+  } else {
+    rows.push(['Important','Unused funds at the end of the plan year are forfeited per IRS rules, so budget wisely!']);
+  }
+  rows.forEach(([lbl,val],i)=>{
+    const y=.95+i*1.05;
+    s.addShape(ST.rect,{x:.45,y,w:12.4,h:.92,fill:{color:i%2===0?LIGHT:WHITE},line:{color:'C5D0EA',w:1},rectRadius:.08});
+    s.addText(lbl,{x:.65,y:y+.08,w:4.3,h:.76,fontSize:15,bold:true,color:NAVY,fontFace:'Century Gothic',wrap:true,valign:'middle'});
+    s.addText(val,{x:5.05,y:y+.08,w:7.65,h:.76,fontSize:16,color:DARK,fontFace:'Century Gothic',wrap:true,valign:'middle'});
   });
   ftr(s,pg); pg++;}
 
@@ -603,7 +752,7 @@ function addCommuter(pptx, cfg, pg) {
     s.addShape(ST.rect,{x,y:1.72,w:colW,h:.62,fill:{color:NAVY},line:{color:NAVY,w:0},rectRadius:.08});
     s.addText('Mass Transit',{x:x+.2,y:1.72,w:colW-.4,h:.62,fontSize:16,bold:true,color:WHITE,fontFace:'Century Gothic',valign:'middle'});
     s.addText('Monthly Pre-Tax Maximum:',{x:x+.2,y:2.45,w:colW-.4,h:.38,fontSize:14,bold:true,color:NAVY,fontFace:'Century Gothic'});
-    s.addText(cfg.transit||'$340',{x:x+.2,y:2.85,w:colW-.4,h:.72,fontSize:36,bold:true,color:GREEN,fontFace:'Century Gothic'});
+    s.addText(cfg.transit||'$350',{x:x+.2,y:2.85,w:colW-.4,h:.72,fontSize:36,bold:true,color:GREEN,fontFace:'Century Gothic'});
     s.addText('per month',{x:x+.2,y:3.6,w:colW-.4,h:.38,fontSize:16,color:DARK,fontFace:'Century Gothic'});
     s.addText('Eligible: bus, subway, commuter rail, ferry, vanpool, and qualifying rideshare services to and from work.',
       {x:x+.2,y:4.1,w:colW-.4,h:2.4,fontSize:16,color:DARK,fontFace:'Century Gothic',wrap:true,lineSpacingMultiple:1.25});
@@ -614,7 +763,7 @@ function addCommuter(pptx, cfg, pg) {
     s.addShape(ST.rect,{x,y:1.72,w:colW,h:.62,fill:{color:BLUE},line:{color:BLUE,w:0},rectRadius:.08});
     s.addText('Parking',{x:x+.2,y:1.72,w:colW-.4,h:.62,fontSize:16,bold:true,color:WHITE,fontFace:'Century Gothic',valign:'middle'});
     s.addText('Monthly Pre-Tax Maximum:',{x:x+.2,y:2.45,w:colW-.4,h:.38,fontSize:14,bold:true,color:NAVY,fontFace:'Century Gothic'});
-    s.addText(cfg.parking||'$340',{x:x+.2,y:2.85,w:colW-.4,h:.72,fontSize:36,bold:true,color:GREEN,fontFace:'Century Gothic'});
+    s.addText(cfg.parking||'$350',{x:x+.2,y:2.85,w:colW-.4,h:.72,fontSize:36,bold:true,color:GREEN,fontFace:'Century Gothic'});
     s.addText('per month',{x:x+.2,y:3.6,w:colW-.4,h:.38,fontSize:16,color:DARK,fontFace:'Century Gothic'});
     s.addText('Eligible: employer lots, garages, meters, and parking apps like SpotHero near your workplace.',
       {x:x+.2,y:4.1,w:colW-.4,h:2.4,fontSize:16,color:DARK,fontFace:'Century Gothic',wrap:true,lineSpacingMultiple:1.25});
@@ -766,8 +915,8 @@ function addHSA(pptx, cfg, pg) {
   const eeIndC=cfg.erContrib?(indLim-erIndC):indLim;
   const eeFamC=cfg.erContrib?(famLim-erFamC):famLim;
   const lims=[
-    ['Individual Coverage', cfg.ind||'$4,400', 'Employee only enrolled in HDHP', erIndC, eeIndC],
-    ['Family Coverage',     cfg.fam||'$8,750', 'Employee + dependents enrolled in HDHP', erFamC, eeFamC],
+    ['Individual Coverage', cfg.ind||'$4,500', 'Employee only enrolled in HDHP', erIndC, eeIndC],
+    ['Family Coverage',     cfg.fam||'$9,000', 'Employee + dependents enrolled in HDHP', erFamC, eeFamC],
     ['Catch-Up (age 55+)',  cfg.catchup||'+$1,000', 'Additional amount for participants aged 55 and older', 0, 0],
   ];
   lims.forEach(([title,amount,desc,erAmt,eeAmt],i)=>{
@@ -968,6 +1117,10 @@ function updateCarryoverRow() {
   document.getElementById('hcfsa-carryover-row').style.display =
     document.getElementById('hcfsa-type').value === 'carryover' ? '' : 'none';
 }
+function updateLPCarryoverRow() {
+  document.getElementById('lpfsa-carryover-row').style.display =
+    document.getElementById('lpfsa-type').value === 'carryover' ? '' : 'none';
+}
 function showStatus(msg, type='info') {
   const el = document.getElementById('status');
   el.textContent = msg; el.className = 'status ' + type; el.style.display = 'block';
@@ -985,6 +1138,7 @@ async function generateDeck() {
 
   const plans=[];
   if(isChecked('hcfsa'))    plans.push('hcfsa');
+  if(isChecked('lpfsa'))    plans.push('lpfsa');
   if(isChecked('dcfsa'))    plans.push('dcfsa');
   if(isChecked('commuter')) plans.push('commuter');
   if(isChecked('hsa'))      plans.push('hsa');
@@ -1001,7 +1155,7 @@ async function generateDeck() {
 
   if(plans.length>1){
     const s=pptx.addSlide('HG'); hdr(s,'Today’s Presentation — Plan Overview');
-    const names={hcfsa:'Healthcare FSA (HC FSA)',dcfsa:'Dependent Daycare FSA (DC FSA)',commuter:'Commuter Benefits (Transit & Parking)',hsa:'Health Savings Account (HSA)'};
+    const names={hcfsa:'Healthcare FSA (HC FSA)',lpfsa:'Limited Purpose FSA (LP FSA)',dcfsa:'Dependent Daycare FSA (DC FSA)',commuter:'Commuter Benefits (Transit & Parking)',hsa:'Health Savings Account (HSA)'};
     const planItems=plans.map(p=>names[p]);
     planItems.forEach((nm,i)=>{
       const y=1.05+i*1.22;
@@ -1017,6 +1171,9 @@ async function generateDeck() {
   if(plans.includes('hcfsa')){
     pg=addHCFSA(pptx,{max:v('hcfsa-max'),type:v('hcfsa-type'),carryover:v('hcfsa-carryover'),runout:v('hcfsa-runout')},pg);
   }
+  if(plans.includes('lpfsa')){
+    pg=addLPFSA(pptx,{max:v('lpfsa-max'),type:v('lpfsa-type'),carryover:v('lpfsa-carryover'),runout:v('lpfsa-runout')},plans,pg);
+  }
   if(plans.includes('dcfsa')){
     pg=addDCFSA(pptx,{maxJoint:v('dcfsa-max-joint'),maxSep:v('dcfsa-max-sep'),type:v('dcfsa-type')},pg);
   }
@@ -1028,7 +1185,7 @@ async function generateDeck() {
   }
 
   addCardSlide(pptx,plans,pg); pg++;
-  if(plans.includes('hcfsa')||plans.includes('dcfsa')){ addClaimsSlide(pptx,pg); pg++; }
+  if(plans.includes('hcfsa')||plans.includes('lpfsa')||plans.includes('dcfsa')){ addClaimsSlide(pptx,pg); pg++; }
   addPortalSlide(pptx,pg); pg++;
   addMobileSlide(pptx,pg); pg++;
   addContactSlide(pptx);
